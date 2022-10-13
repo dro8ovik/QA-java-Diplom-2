@@ -8,10 +8,11 @@
     <artifactId>QA-java-Diplom-2</artifactId>
     <version>1.0-SNAPSHOT</version>
     <properties>
-        <!-- версия Aspectj -->
-        <aspectj.version>1.9.7</aspectj.version>
         <!-- версия Allure -->
+        <aspectj.version>1.9.9.1</aspectj.version>
         <allure.version>2.15.0</allure.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -26,6 +27,23 @@
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-rest-assured</artifactId>
             <version>${allure.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>5.2.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.14.0-rc2</version>
         </dependency>
     </dependencies>
 
@@ -46,6 +64,10 @@
                             <name>listener</name>
                             <value>io.qameta.allure.junit4.AllureJunit4</value>
                         </property>
+                        <property>
+                        <maven.compiler.source>11</maven.compiler.source>
+                        <maven.compiler.target>11</maven.compiler.target>
+                        </property>
                     </properties>
                     <systemProperties>
                         <property>
@@ -60,6 +82,7 @@
                         <groupId>org.aspectj</groupId>
                         <artifactId>aspectjweaver</artifactId>
                         <version>${aspectj.version}</version>
+                        <scope>runtime</scope>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -74,9 +97,4 @@
             </plugin>
         </plugins>
     </build>
-    <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-    </properties>
-
 </project>
