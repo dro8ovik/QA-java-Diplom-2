@@ -8,8 +8,6 @@ import java.time.LocalDateTime;
 import static io.restassured.RestAssured.given;
 
 public class RegisterUserTest {
-    private static final String ERROR_MESSAGE_REQUIRED_DATA = "Email, password and name are required fields";
-    private static final String ERROR_MESSAGE_EXIST_USER = "User already exists";
     private static CreateUserRequest user;
 
     @Before
@@ -24,7 +22,7 @@ public class RegisterUserTest {
         RegisteredUserResponse registeredUser = given()
                 .body(user)
                 .when()
-                .post(TestData.REGISTER_USER_ENDPOINT)
+                .post(TestData.ENDPOINT_REGISTER)
                 .then()
                 .statusCode(200)
                 .extract()
@@ -41,10 +39,10 @@ public class RegisterUserTest {
         Response response = given()
                 .body(user)
                 .when()
-                .post(TestData.REGISTER_USER_ENDPOINT);
+                .post(TestData.ENDPOINT_REGISTER);
         Assert.assertEquals(403, response.statusCode());
         Assert.assertEquals(false, response.jsonPath().get("success"));
-        Assert.assertEquals(ERROR_MESSAGE_EXIST_USER, response.jsonPath().get("message"));
+        Assert.assertEquals(TestData.ERROR_MESSAGE_EXIST_USER, response.jsonPath().get("message"));
     }
 
     @Test
@@ -53,10 +51,10 @@ public class RegisterUserTest {
         Response response = given()
                 .body(user)
                 .when()
-                .post(TestData.REGISTER_USER_ENDPOINT);
+                .post(TestData.ENDPOINT_REGISTER);
         Assert.assertEquals(403, response.statusCode());
         Assert.assertEquals(false, response.jsonPath().get("success"));
-        Assert.assertEquals(ERROR_MESSAGE_REQUIRED_DATA, response.jsonPath().get("message"));
+        Assert.assertEquals(TestData.ERROR_MESSAGE_REQUIRED_DATA, response.jsonPath().get("message"));
     }
 
     @Test
@@ -65,10 +63,10 @@ public class RegisterUserTest {
         Response response = given()
                 .body(user)
                 .when()
-                .post(TestData.REGISTER_USER_ENDPOINT);
+                .post(TestData.ENDPOINT_REGISTER);
         Assert.assertEquals(403, response.statusCode());
         Assert.assertEquals(false, response.jsonPath().get("success"));
-        Assert.assertEquals(ERROR_MESSAGE_REQUIRED_DATA, response.jsonPath().get("message"));
+        Assert.assertEquals(TestData.ERROR_MESSAGE_REQUIRED_DATA, response.jsonPath().get("message"));
     }
 
     @Test
@@ -77,9 +75,9 @@ public class RegisterUserTest {
         Response response = given()
                 .body(user)
                 .when()
-                .post(TestData.REGISTER_USER_ENDPOINT);
+                .post(TestData.ENDPOINT_REGISTER);
         Assert.assertEquals(403, response.statusCode());
         Assert.assertEquals(false, response.jsonPath().get("success"));
-        Assert.assertEquals(ERROR_MESSAGE_REQUIRED_DATA, response.jsonPath().get("message"));
+        Assert.assertEquals(TestData.ERROR_MESSAGE_REQUIRED_DATA, response.jsonPath().get("message"));
     }
 }

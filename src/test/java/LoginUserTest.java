@@ -6,7 +6,6 @@ import org.junit.Test;
 import static io.restassured.RestAssured.given;
 
 public class LoginUserTest {
-    private static final String ERROR_MESSAGE_INCORRECT_USER_DATA = "email or password are incorrect";
     private static CreateUserRequest user;
 
     @Before
@@ -21,7 +20,7 @@ public class LoginUserTest {
         RegisteredUserResponse registeredUser = given()
                 .body(user)
                 .when()
-                .post(TestData.LOGIN_USER_ENDPOINT)
+                .post(TestData.ENDPOINT_LOGIN)
                 .then()
                 .statusCode(200)
                 .extract().as(RegisteredUserResponse.class);
@@ -38,10 +37,10 @@ public class LoginUserTest {
         Response response = given()
                 .body(user)
                 .when()
-                .post(TestData.LOGIN_USER_ENDPOINT);
+                .post(TestData.ENDPOINT_LOGIN);
         Assert.assertEquals(401, response.statusCode());
         Assert.assertEquals(false, response.jsonPath().get("success"));
-        Assert.assertEquals(ERROR_MESSAGE_INCORRECT_USER_DATA, response.jsonPath().get("message"));
+        Assert.assertEquals(TestData.ERROR_MESSAGE_INCORRECT_USER_DATA, response.jsonPath().get("message"));
     }
 
     @Test
@@ -51,10 +50,10 @@ public class LoginUserTest {
         Response response = given()
                 .body(user)
                 .when()
-                .post(TestData.LOGIN_USER_ENDPOINT);
+                .post(TestData.ENDPOINT_LOGIN);
         Assert.assertEquals(401, response.statusCode());
         Assert.assertEquals(false, response.jsonPath().get("success"));
-        Assert.assertEquals(ERROR_MESSAGE_INCORRECT_USER_DATA, response.jsonPath().get("message"));
+        Assert.assertEquals(TestData.ERROR_MESSAGE_INCORRECT_USER_DATA, response.jsonPath().get("message"));
     }
 
 

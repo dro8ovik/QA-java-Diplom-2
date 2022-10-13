@@ -7,8 +7,6 @@ import static io.restassured.RestAssured.given;
 
 public class UpdateUserDataTest {
 
-    private static final String ERROR_MESSAGE_UNAUTHORIZED = "You should be authorised";
-
     private static CreateUserRequest user;
 
     @Before
@@ -21,17 +19,17 @@ public class UpdateUserDataTest {
     public void updateUserNameSuccessTest() {
         Utils.registerUser(user);
         RegisteredUserResponse registeredUser = Utils.getRegisteredUser(user);
-        registeredUser.getUser().setName("Jules");
+        registeredUser.getUser().setName(TestData.USER_NEW_NAME);
         Response response = given()
                 .header("authorization", registeredUser.getAccessToken())
                 .and()
                 .body(registeredUser.getUser())
                 .when()
-                .patch(TestData.USER_DATA_ENDPOINT);
+                .patch(TestData.ENDPOINT_USER);
         Assert.assertEquals(200, response.getStatusCode());
         Assert.assertEquals(true, response.jsonPath().get("success"));
         Assert.assertEquals(user.getEmail(), response.jsonPath().get("user.email"));
-        Assert.assertEquals("Jules", response.jsonPath().get("user.name"));
+        Assert.assertEquals(TestData.USER_NEW_NAME, response.jsonPath().get("user.name"));
         Utils.deletedUser(registeredUser);
     }
 
@@ -39,17 +37,17 @@ public class UpdateUserDataTest {
     public void updateUserEmailSuccessTest() {
         Utils.registerUser(user);
         RegisteredUserResponse registeredUser = Utils.getRegisteredUser(user);
-        registeredUser.getUser().setEmail("jules.winnfield@gmail.com");
+        registeredUser.getUser().setEmail(TestData.USER_NEW_EMAIL);
         Response response = given()
                 .header("authorization", registeredUser.getAccessToken())
                 .and()
                 .body(registeredUser.getUser())
                 .when()
-                .patch(TestData.USER_DATA_ENDPOINT);
+                .patch(TestData.ENDPOINT_USER);
         Assert.assertEquals(200, response.getStatusCode());
         Assert.assertEquals(true, response.jsonPath().get("success"));
         Assert.assertEquals(user.getName(), response.jsonPath().get("user.name"));
-        Assert.assertEquals("jules.winnfield@gmail.com", response.jsonPath().get("user.email"));
+        Assert.assertEquals(TestData.USER_NEW_EMAIL, response.jsonPath().get("user.email"));
         Utils.deletedUser(registeredUser);
     }
 
@@ -57,14 +55,14 @@ public class UpdateUserDataTest {
     public void updateUserNameUnauthorizedErrorTest() {
         Utils.registerUser(user);
         RegisteredUserResponse registeredUser = Utils.getRegisteredUser(user);
-        registeredUser.getUser().setName("Jules");
+        registeredUser.getUser().setName(TestData.USER_NEW_NAME);
         Response response = given()
                 .body(registeredUser.getUser())
                 .when()
-                .patch(TestData.USER_DATA_ENDPOINT);
+                .patch(TestData.ENDPOINT_USER);
         Assert.assertEquals(401, response.getStatusCode());
         Assert.assertEquals(false, response.jsonPath().get("success"));
-        Assert.assertEquals(ERROR_MESSAGE_UNAUTHORIZED, response.jsonPath().get("message"));
+        Assert.assertEquals(TestData.ERROR_MESSAGE_UNAUTHORIZED, response.jsonPath().get("message"));
         Utils.deletedUser(registeredUser);
     }
 
@@ -72,14 +70,14 @@ public class UpdateUserDataTest {
     public void updateUserEmailUnauthorizedErrorTest() {
         Utils.registerUser(user);
         RegisteredUserResponse registeredUser = Utils.getRegisteredUser(user);
-        registeredUser.getUser().setEmail("jules.winnfield@gmail.com");
+        registeredUser.getUser().setEmail(TestData.USER_NEW_EMAIL);
         Response response = given()
                 .body(registeredUser.getUser())
                 .when()
-                .patch(TestData.USER_DATA_ENDPOINT);
+                .patch(TestData.ENDPOINT_USER);
         Assert.assertEquals(401, response.getStatusCode());
         Assert.assertEquals(false, response.jsonPath().get("success"));
-        Assert.assertEquals(ERROR_MESSAGE_UNAUTHORIZED, response.jsonPath().get("message"));
+        Assert.assertEquals(TestData.ERROR_MESSAGE_UNAUTHORIZED, response.jsonPath().get("message"));
         Utils.deletedUser(registeredUser);
     }
 }
