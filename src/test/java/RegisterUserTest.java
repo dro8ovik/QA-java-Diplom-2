@@ -1,24 +1,25 @@
+import Requests.RegisterUserRequest;
+import Responses.RegisteredUserResponse;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.LocalDateTime;
-
 import static io.restassured.RestAssured.given;
 
-public class RegisterUserTest {
-    private static CreateUserRequest user;
+public class RegisterUserTest{
+    private static RegisterUserRequest user;
 
     @Before
-    public void setup() {
-        Specifications.installSpecs(Specifications.reqSpec(TestData.URL));
-        user = new CreateUserRequest(TestData.USER_EMAIL, TestData.USER_PASS, TestData.USER_NAME);
+    public void setup(){
+        Utils.setReqSpec(TestData.HOST_URL, ContentType.JSON);
+        user = new RegisterUserRequest(TestData.USER_EMAIL, TestData.USER_PASS, TestData.USER_NAME);
+        Utils.cleanTestUserData(user);
     }
 
     @Test
     public void registerUserSuccessTest() {
-        user.setEmail(LocalDateTime.now().getNano() + "@gmail.com");
         RegisteredUserResponse registeredUser = given()
                 .body(user)
                 .when()
@@ -30,7 +31,7 @@ public class RegisterUserTest {
         Assert.assertEquals(true, registeredUser.getSuccess());
         Assert.assertEquals(user.getEmail(), registeredUser.getUser().getEmail());
         Assert.assertEquals(user.getName(), registeredUser.getUser().getName());
-        Utils.deletedUser(registeredUser);
+        Utils.deleteUser(registeredUser);
     }
 
     @Test
@@ -43,6 +44,7 @@ public class RegisterUserTest {
         Assert.assertEquals(403, response.statusCode());
         Assert.assertEquals(false, response.jsonPath().get("success"));
         Assert.assertEquals(TestData.ERROR_MESSAGE_EXIST_USER, response.jsonPath().get("message"));
+        Utils.cleanTestUserData(user);
     }
 
     @Test

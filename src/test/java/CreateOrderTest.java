@@ -1,4 +1,9 @@
+import Requests.CreateOrderRequest;
+import Requests.RegisterUserRequest;
+import Responses.RegisteredUserResponse;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,18 +14,23 @@ import java.util.List;
 
 import static io.restassured.RestAssured.given;
 
-public class CreateOrderTest {
-    private static CreateUserRequest user;
+public class CreateOrderTest{
+    private static RegisterUserRequest user;
 
     @Before
-    public void setup() {
-        Specifications.installSpecs(Specifications.reqSpec(TestData.URL));
-        user = new CreateUserRequest(TestData.USER_EMAIL, TestData.USER_PASS, TestData.USER_NAME);
+    public void setup(){
+        Utils.setReqSpec(TestData.HOST_URL, ContentType.JSON);
+        user = new RegisterUserRequest(TestData.USER_EMAIL, TestData.USER_PASS, TestData.USER_NAME);
+        Utils.cleanTestUserData(user);
+        Utils.registerUser(user);
     }
 
+    @After
+    public void tearDown(){
+        Utils.cleanTestUserData(user);
+    }
     @Test
     public void createOrderSuccessTest() {
-        Utils.registerUser(user);
         RegisteredUserResponse registeredUser = Utils.getRegisteredUser(user);
         List<String> ingredients = new ArrayList<>(Arrays.asList(Utils.getIngredientIdByIndex(0), Utils.getIngredientIdByIndex(1)));
         CreateOrderRequest order = new CreateOrderRequest(ingredients);
@@ -50,7 +60,6 @@ public class CreateOrderTest {
 
     @Test
     public void createOrderWithoutIngredientsErrorTest() {
-        Utils.registerUser(user);
         RegisteredUserResponse registeredUser = Utils.getRegisteredUser(user);
         CreateOrderRequest order = new CreateOrderRequest(new ArrayList<>());
         Response response = given()
@@ -66,7 +75,6 @@ public class CreateOrderTest {
 
     @Test
     public void createOrderIncorrectIngredientErrorTest() {
-        Utils.registerUser(user);
         RegisteredUserResponse registeredUser = Utils.getRegisteredUser(user);
         List<String> ingredients = new ArrayList<>(Arrays.asList(Utils.getIngredientIdByIndex(0) + 1, Utils.getIngredientIdByIndex(1)));
         CreateOrderRequest order = new CreateOrderRequest(ingredients);

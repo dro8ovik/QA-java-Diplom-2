@@ -1,13 +1,15 @@
-public class CreateOrderResponse {
+package Responses;
+
+public class CreatedOrderResponse {
 
     private String name;
     private Boolean success;
     private Order order;
 
-    public CreateOrderResponse() {
+    public CreatedOrderResponse() {
     }
 
-    public CreateOrderResponse(String name, Boolean success, Order order) {
+    public CreatedOrderResponse(String name, Boolean success, Order order) {
         this.name = name;
         this.success = success;
         this.order = order;

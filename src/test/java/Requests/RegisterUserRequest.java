@@ -1,10 +1,12 @@
-public class CreateUserRequest extends LoginUserRequest{
+package Requests;
+
+public class RegisterUserRequest extends LoginUserRequest {
     private String name;
 
-    public CreateUserRequest() {
+    public RegisterUserRequest() {
     }
 
-    public CreateUserRequest(String email, String password, String name) {
+    public RegisterUserRequest(String email, String password, String name) {
         super(email, password);
         this.name = name;
     }

@@ -1,3 +1,6 @@
+import Requests.RegisterUserRequest;
+import Responses.RegisteredUserResponse;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.junit.Assert;
 import org.junit.Before;
@@ -7,14 +10,13 @@ import static io.restassured.RestAssured.given;
 
 public class GetOrdersTest {
 
-    private static CreateUserRequest user;
-
+    private static RegisterUserRequest user;
     @Before
-    public void setup() {
-        Specifications.installSpecs(Specifications.reqSpec(TestData.URL));
-        user = new CreateUserRequest(TestData.USER_EMAIL, TestData.USER_PASS, TestData.USER_NAME);
+    public void setup(){
+        Utils.setReqSpec(TestData.HOST_URL, ContentType.JSON);
+        user = new RegisterUserRequest(TestData.USER_EMAIL, TestData.USER_PASS, TestData.USER_NAME);
+        Utils.cleanTestUserData(user);
     }
-
     @Test
     public void getOrdersSuccessTest() {
         Utils.registerUser(user);
@@ -28,6 +30,7 @@ public class GetOrdersTest {
         Assert.assertEquals(200, response.statusCode());
         Assert.assertEquals(true, response.jsonPath().get("success"));
         Assert.assertTrue(response.jsonPath().getList("orders").size()>=2);
+        Utils.deleteUser(registeredUser);
     }
 
     @Test

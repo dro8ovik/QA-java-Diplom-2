@@ -1,3 +1,5 @@
+package Responses;
+
 public class RegisteredUserResponse {
     private Boolean success;
     private User user;

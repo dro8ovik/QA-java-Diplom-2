@@ -1,4 +1,10 @@
-import io.restassured.response.Response;
+import Requests.CreateOrderRequest;
+import Requests.RegisterUserRequest;
+import Requests.LoginUserRequest;
+import Responses.RegisteredUserResponse;
+import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.http.ContentType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,20 +14,32 @@ import static io.restassured.RestAssured.given;
 
 public class Utils {
 
-    public static void registerUser(CreateUserRequest user) {
+    public static void setReqSpec(String url, ContentType contentType) {
+        RestAssured.requestSpecification = new RequestSpecBuilder()
+                .setBaseUri(url)
+                .setContentType(contentType)
+                .build();
+    }
+
+    public static void cleanTestUserData(RegisterUserRequest user) {
+        registerUser(user);
+        deleteUser(getRegisteredUser(user));
+    }
+
+
+    public static void registerUser(RegisterUserRequest user) {
         given()
                 .body(user)
                 .when()
                 .post(TestData.ENDPOINT_REGISTER);
     }
 
-    public static void deletedUser(RegisteredUserResponse user) {
+    public static void deleteUser(RegisteredUserResponse user) {
         given()
                 .header("authorization", user.getAccessToken())
                 .body(user)
                 .when()
-                .delete(TestData.ENDPOINT_USER)
-                .then().log().all();
+                .delete(TestData.ENDPOINT_USER);
     }
 
     public static RegisteredUserResponse getRegisteredUser(LoginUserRequest user) {
