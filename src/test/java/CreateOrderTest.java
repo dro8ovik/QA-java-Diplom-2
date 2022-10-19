@@ -16,24 +16,27 @@ import static io.restassured.RestAssured.given;
 
 public class CreateOrderTest{
     private static RegisterUserRequest user;
+    private static RegisteredUserResponse registeredUser;
+    private static List<String> ingredients;
+    private static CreateOrderRequest order;
 
     @Before
     public void setup(){
         Utils.setReqSpec(TestData.HOST_URL, ContentType.JSON);
         user = new RegisterUserRequest(TestData.USER_EMAIL, TestData.USER_PASS, TestData.USER_NAME);
         Utils.cleanTestUserData(user);
-        Utils.registerUser(user);
     }
 
     @After
-    public void tearDown(){
-        Utils.cleanTestUserData(user);
+    public void teardown() {
+        if (registeredUser != null)
+            Utils.deleteUser(registeredUser);
     }
     @Test
     public void createOrderSuccessTest() {
-        RegisteredUserResponse registeredUser = Utils.getRegisteredUser(user);
-        List<String> ingredients = new ArrayList<>(Arrays.asList(Utils.getIngredientIdByIndex(0), Utils.getIngredientIdByIndex(1)));
-        CreateOrderRequest order = new CreateOrderRequest(ingredients);
+        registeredUser = Utils.registerUser(user);
+        ingredients = new ArrayList<>(Arrays.asList(Utils.getIngredientIdByIndex(0), Utils.getIngredientIdByIndex(1)));
+        order = new CreateOrderRequest(ingredients);
         Response response = given()
                 .header("authorization", registeredUser.getAccessToken())
                 .and()
@@ -47,8 +50,8 @@ public class CreateOrderTest{
 
     @Test
     public void createOrderUnauthorizedSuccessTest() {
-        List<String> ingredients = new ArrayList<>(Arrays.asList(Utils.getIngredientIdByIndex(0), Utils.getIngredientIdByIndex(1)));
-        CreateOrderRequest order = new CreateOrderRequest(ingredients);
+        ingredients = new ArrayList<>(Arrays.asList(Utils.getIngredientIdByIndex(0), Utils.getIngredientIdByIndex(1)));
+        order = new CreateOrderRequest(ingredients);
         Response response = given()
                 .body(order)
                 .when()
@@ -60,8 +63,9 @@ public class CreateOrderTest{
 
     @Test
     public void createOrderWithoutIngredientsErrorTest() {
-        RegisteredUserResponse registeredUser = Utils.getRegisteredUser(user);
-        CreateOrderRequest order = new CreateOrderRequest(new ArrayList<>());
+        registeredUser = Utils.registerUser(user);
+        ingredients = new ArrayList<>();
+        order = new CreateOrderRequest(ingredients);
         Response response = given()
                 .header("authorization", registeredUser.getAccessToken())
                 .and()
@@ -75,9 +79,9 @@ public class CreateOrderTest{
 
     @Test
     public void createOrderIncorrectIngredientErrorTest() {
-        RegisteredUserResponse registeredUser = Utils.getRegisteredUser(user);
-        List<String> ingredients = new ArrayList<>(Arrays.asList(Utils.getIngredientIdByIndex(0) + 1, Utils.getIngredientIdByIndex(1)));
-        CreateOrderRequest order = new CreateOrderRequest(ingredients);
+        registeredUser = Utils.registerUser(user);
+        ingredients = new ArrayList<>(Arrays.asList(Utils.getIngredientIdByIndex(0) + 1, Utils.getIngredientIdByIndex(1)));
+        order = new CreateOrderRequest(ingredients);
         given()
                 .header("authorization", registeredUser.getAccessToken())
                 .and()

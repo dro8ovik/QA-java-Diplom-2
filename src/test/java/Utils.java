@@ -22,16 +22,11 @@ public class Utils {
     }
 
     public static void cleanTestUserData(RegisterUserRequest user) {
-        registerUser(user);
-        deleteUser(getRegisteredUser(user));
-    }
-
-
-    public static void registerUser(RegisterUserRequest user) {
         given()
                 .body(user)
                 .when()
                 .post(TestData.ENDPOINT_REGISTER);
+        deleteUser(getRegisteredUser(user));
     }
 
     public static void deleteUser(RegisteredUserResponse user) {
@@ -40,6 +35,15 @@ public class Utils {
                 .body(user)
                 .when()
                 .delete(TestData.ENDPOINT_USER);
+    }
+
+    public static RegisteredUserResponse registerUser(LoginUserRequest user) {
+        return given()
+                .body(user)
+                .when()
+                .post(TestData.ENDPOINT_REGISTER)
+                .then()
+                .extract().as(RegisteredUserResponse.class);
     }
 
     public static RegisteredUserResponse getRegisteredUser(LoginUserRequest user) {

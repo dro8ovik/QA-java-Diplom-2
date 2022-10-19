@@ -9,24 +9,29 @@ import org.junit.Test;
 
 import static io.restassured.RestAssured.given;
 
-public class UpdateUserDataTest{
+public class UpdateUserDataTest {
 
     private static RegisterUserRequest user;
+    private static RegisterUserRequest newUser;
     private static RegisteredUserResponse registeredUser;
+    private static RegisteredUserResponse registeredNewUser;
 
     @Before
-    public void setup(){
+    public void setup() {
         Utils.setReqSpec(TestData.HOST_URL, ContentType.JSON);
         user = new RegisterUserRequest(TestData.USER_EMAIL, TestData.USER_PASS, TestData.USER_NAME);
         Utils.cleanTestUserData(user);
-        Utils.registerUser(user);
-        registeredUser = Utils.getRegisteredUser(user);
+        registeredUser = Utils.registerUser(user);
     }
 
     @After
-    public void tearDown(){
-        Utils.deleteUser(registeredUser);
+    public void teardown() {
+        if (registeredUser != null)
+            Utils.deleteUser(registeredUser);
+        if (registeredNewUser != null)
+            Utils.deleteUser(registeredNewUser);
     }
+
     @Test
     public void updateUserNameSuccessTest() {
         registeredUser.getUser().setName(TestData.USER_NEW_NAME);
@@ -44,7 +49,7 @@ public class UpdateUserDataTest{
 
     @Test
     public void updateUserEmailSuccessTest() {
-        RegisterUserRequest newUser = new RegisterUserRequest(TestData.USER_NEW_EMAIL, TestData.USER_PASS, TestData.USER_NEW_NAME);
+        newUser = new RegisterUserRequest(TestData.USER_NEW_EMAIL, TestData.USER_PASS, TestData.USER_NEW_NAME);
         Utils.cleanTestUserData(newUser);
         registeredUser.getUser().setEmail(TestData.USER_NEW_EMAIL);
         Response response = given()
@@ -61,8 +66,8 @@ public class UpdateUserDataTest{
 
     @Test
     public void updateUserEmailExistErrorTest() {
-        RegisterUserRequest newUser = new RegisterUserRequest(TestData.USER_NEW_EMAIL, TestData.USER_PASS, TestData.USER_NEW_NAME);
-        Utils.registerUser(newUser);
+        newUser = new RegisterUserRequest(TestData.USER_NEW_EMAIL, TestData.USER_PASS, TestData.USER_NEW_NAME);
+        registeredNewUser = Utils.registerUser(newUser);
         registeredUser.getUser().setEmail(newUser.getEmail());
         Response response = given()
                 .header("authorization", registeredUser.getAccessToken())
@@ -73,7 +78,6 @@ public class UpdateUserDataTest{
         Assert.assertEquals(403, response.getStatusCode());
         Assert.assertEquals(false, response.jsonPath().get("success"));
         Assert.assertEquals(TestData.ERROR_MESSAGE_EXIST_EMAIL, response.jsonPath().get("message"));
-        Utils.cleanTestUserData(newUser);
     }
 
     @Test
